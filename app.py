@@ -4,24 +4,19 @@ import re
 import pandas as pd
 
 st.set_page_config(page_title="CUET PG Checker", layout="wide")
-st.title("📘 CUET PG Answer Key Checker (Accurate Version)")
+st.title("📘 CUET PG Answer Key Checker")
 
 response_sheet_file = st.file_uploader("📄 Upload Response Sheet PDF", type=["pdf"])
 answer_key_file = st.file_uploader("🔐 Upload Answer Key PDF", type=["pdf"])
 
 # PDF text extraction
-def extract_text(file, label=""):
+def extract_text(file):
     with fitz.open(stream=file.read(), filetype="pdf") as doc:
-        text = "\n".join(page.get_text() for page in doc)
-        st.text(f"✅ {label} Extracted ({len(text)} chars)")
-        return text
+        return "\n".join(page.get_text() for page in doc)
 
 # Answer Key: Question ID → Correct Option ID
 def parse_answer_key(text):
-    answer_map = dict(re.findall(r"(\d{10})\s+(\d{10})", text))
-    st.write("📘 Parsed Answer Key Sample:")
-    st.json(dict(list(answer_map.items())[:5]))
-    return answer_map
+    return dict(re.findall(r"(\d{10})\s+(\d{10})", text))
 
 # Response Sheet Parser
 def parse_response_sheet(text):
@@ -38,10 +33,9 @@ def parse_response_sheet(text):
     if block:
         blocks.append(block)
 
-    st.write(f"📦 Found {len(blocks)} question blocks.")
     response_map = {}
 
-    for i, block in enumerate(blocks):
+    for block in blocks:
         qid = opt_ids = chosen = None
         options = [None] * 4
 
@@ -64,23 +58,14 @@ def parse_response_sheet(text):
                 index = int(chosen) - 1
                 response_map[qid] = options[index] if 0 <= index < 4 else "Unattempted"
 
-        if i < 3:
-            st.markdown(f"### 🔍 Question Block {i+1}")
-            st.json({
-                "Question ID": qid,
-                "Option IDs": options,
-                "Chosen": chosen,
-                "Mapped Chosen Option ID": response_map.get(qid, "N/A")
-            })
-
     return response_map
 
 # Main Logic
 if response_sheet_file and answer_key_file:
     with st.spinner("Processing..."):
         try:
-            response_text = extract_text(response_sheet_file, "Response Sheet")
-            answer_text = extract_text(answer_key_file, "Answer Key")
+            response_text = extract_text(response_sheet_file)
+            answer_text = extract_text(answer_key_file)
 
             answer_map = parse_answer_key(answer_text)
             response_map = parse_response_sheet(response_text)
@@ -125,4 +110,4 @@ if response_sheet_file and answer_key_file:
             st.dataframe(df, use_container_width=True)
 
         except Exception as e:
-            st.error(f"❌ Error during processing: {e}")
+            st.error("❌ An error occurred while processing your files. Please check the format and try again.")
