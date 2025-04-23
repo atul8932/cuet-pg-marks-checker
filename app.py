@@ -1,4 +1,5 @@
 import streamlit as st
+import fitz
 import re
 import pandas as pd
 
