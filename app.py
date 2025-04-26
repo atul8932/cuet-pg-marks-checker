@@ -3,7 +3,7 @@ import fitz
 import re
 import pandas as pd
 
-st.set_page_config(page_title="CUET PG Checker", layout="wide")
+st.set_page_config(page_title="CUET PG Hacker", layout="wide")
 st.title("📘 CUET PG Answer Key Checker")
 
 response_sheet_file = st.file_uploader("📄 Upload Response Sheet PDF", type=["pdf"])
