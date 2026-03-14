@@ -4,59 +4,11 @@ import re
 import pandas as pd
 import altair as alt
 
-st.set_page_config(page_title="CUET Marks Checker", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="CUET PG Checker", layout="wide")
+st.title("📘 CUET PG Answer Key Checker")
 
-# Custom CSS for better aesthetics
-st.markdown("""
-<style>
-    /* Gradient text for main title */
-    .main-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        background: -webkit-linear-gradient(45deg, #4f46e5, #ec4899);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        margin-bottom: 0px;
-        padding-bottom: 0px;
-    }
-    .sub-title {
-        text-align: center;
-        color: #6b7280;
-        font-size: 1.2rem;
-        margin-top: 0px;
-        margin-bottom: 40px;
-        font-weight: 500;
-    }
-    
-    /* Style for metrics */
-    div[data-testid="stMetricValue"] {
-        font-size: 2.2rem;
-        font-weight: bold;
-    }
-    
-    /* Hide default Streamlit elements for a cleaner look */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown('<h1 class="main-title">🎓 CUET Marks Checker</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Upload your Response Sheet & Answer Key to calculate your score instantly</p>', unsafe_allow_html=True)
-
-# Layout for file uploaders
-col1, col2 = st.columns(2, gap="large")
-
-with col1:
-    st.markdown("### 📄 Response Sheet")
-    st.info("Upload the PDF containing your recorded responses.")
-    response_sheet_file = st.file_uploader("Response Sheet", type=["pdf"], label_visibility="collapsed")
-
-with col2:
-    st.markdown("### 🔐 Answer Key")
-    st.info("Upload the official NTA Provisional Answer Key PDF.")
-    answer_key_file = st.file_uploader("Answer Key", type=["pdf"], label_visibility="collapsed")
-
+response_sheet_file = st.file_uploader("📄 Upload Response Sheet PDF", type=["pdf"])
+answer_key_file = st.file_uploader("🔐 Upload Answer Key PDF", type=["pdf"])
 
 # PDF text extraction
 @st.cache_data
@@ -246,5 +198,4 @@ else:
                 )
 
         except Exception as e:
-            st.error("❌ An error occurred while processing your files. Please check the PDF format and try again.")
-            st.exception(e)  # Useful for debugging
+            st.error("❌ An error occurred while processing your files. Please check the format and try again."
