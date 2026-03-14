@@ -198,4 +198,4 @@ else:
                 )
 
         except Exception as e:
-            st.error("❌ An error occurred while processing your files. Please check the format and try again."
+            st.error("❌ An error occurred while processing your files. Please check the format and try again.")
