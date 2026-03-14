@@ -41,7 +41,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<h1 class="main-title">🎓 CUET Marks Checker</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">ACME ACADEMY | 🎓 CUET Marks Checker</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">Upload your Response Sheet & Answer Key to calculate your score instantly</p>', unsafe_allow_html=True)
 
 # Layout for file uploaders
