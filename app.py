@@ -3,8 +3,9 @@ import fitz
 import re
 import pandas as pd
 
-st.set_page_config(page_title="CUET PG Checker", layout="wide")
-st.title("📘 CUET PG Answer Key Checker")
+st.set_page_config(page_title="Acme Academy", layout="wide")
+st.title("CUET MARKS COUNTER")
+st.title("SERVICE BY ACME ACADEMY")
 
 response_sheet_file = st.file_uploader("📄 Upload Response Sheet PDF", type=["pdf"])
 answer_key_file = st.file_uploader("🔐 Upload Answer Key PDF", type=["pdf"])
