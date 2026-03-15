@@ -3,6 +3,7 @@ import fitz
 import re
 import pandas as pd
 import altair as alt
+from google_db import save_result
 
 st.set_page_config(page_title="CUET Marks Checker", page_icon="🎓", layout="wide")
 
@@ -68,6 +69,24 @@ def extract_text(file_bytes):
 @st.cache_data
 def parse_answer_key(text):
     return dict(re.findall(r"(\d{10})\s+(\d{10})", text))
+
+def extract_candidate_details(text):
+    details = {"app_no": "Unknown", "roll_no": "Unknown", "name": "Unknown"}
+    
+    app_no_match = re.search(r"Application\s*(?:No\.?|Number)\s*:?\s*([A-Z0-9]+)", text, re.IGNORECASE)
+    if app_no_match:
+        details["app_no"] = app_no_match.group(1).strip()
+        
+    roll_no_match = re.search(r"Roll\s*(?:No\.?|Number)\s*:?\s*([A-Z0-9]+)", text, re.IGNORECASE)
+    if roll_no_match:
+        details["roll_no"] = roll_no_match.group(1).strip()
+        
+    # Attempt to extract candidate name, typically followed by test centre names or next fields
+    name_match = re.search(r"Candidate'?s?\s*Name\s*:?\s*([A-Za-z\s]+?)(?=\n[A-Z]|$)", text, re.IGNORECASE)
+    if name_match:
+        details["name"] = name_match.group(1).strip()
+        
+    return details
 
 # Response Sheet Parser
 @st.cache_data
@@ -177,6 +196,25 @@ else:
             mcol3.metric("❌ Incorrect", f"{incorrect}", "-1 mark each")
             mcol4.metric("⚪ Unattempted", f"{unattempted}", "0 marks")
             
+            st.markdown("---")
+            
+            cand_details = extract_candidate_details(response_text)
+            
+            # Automatically save the result
+            if "saved_files" not in st.session_state:
+                st.session_state.saved_files = set()
+                
+            file_identifier = f"{response_sheet_file.name}-{answer_key_file.name}"
+            
+            if file_identifier not in st.session_state.saved_files:
+                try:
+                    save_result(cand_details["app_no"], cand_details["roll_no"], cand_details["name"], score)
+                    st.session_state.saved_files.add(file_identifier)
+                except Exception as e:
+                    st.error(f"❌ Failed to auto-save to database: {e}")
+            else:
+                st.info(f"💾 Result for {cand_details['name']} ({cand_details['roll_no']}) is logged in the database.")
+                        
             st.markdown("---")
             
             # Layout for Charts and Detailed Table
