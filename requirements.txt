@@ -1,2 +1,6 @@
 PyMuPDF
 gspread
+oauth2client
+streamlit
+pandas
+altair
